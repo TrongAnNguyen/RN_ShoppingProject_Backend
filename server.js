@@ -7,6 +7,7 @@ const { Pool }  = require('pg');
 const keys  = require('./src/config/keys');
 const auth = require('./src/routes/auth');
 const user = require('./src/routes/user');
+const product = require('./src/routes/product');
 
 // Config database
 const pool = new Pool(keys.database);
@@ -19,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Routing
 app.use('/auth', auth);
 app.use('/user', user);
+app.use('/product', product);
 
 app.listen(port, () => {
     console.log('Server running on port: ', port);
