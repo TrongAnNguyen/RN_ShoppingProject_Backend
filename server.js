@@ -4,10 +4,13 @@ const port      = process.env.PORT || 8080;
 const morgan    = require('morgan');
 const bodyParser = require('body-parser');
 const { Pool }  = require('pg');
+const path = require('path');
 const keys  = require('./src/config/keys');
 const auth = require('./src/routes/auth');
 const user = require('./src/routes/user');
 const product = require('./src/routes/product');
+
+global.appRoot = path.resolve(__dirname);
 
 // Config database
 const pool = new Pool(keys.database);

@@ -67,4 +67,16 @@ router.get('/top', async function(req, res, next) {
     });
 });
 
+router.get('/image/type/:name', async function(req, res, next) {
+    const imgName = req.params.name;
+    const path = appRoot + '/images/type/' + imgName;
+    return res.sendFile(path);
+});
+
+router.get('/image/:name', async function(req, res, next) {
+    const imgName = req.params.name;
+    const path = appRoot + '/images/product/' + imgName;
+    return res.sendFile(path);
+});
+
 module.exports = router;
