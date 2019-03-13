@@ -34,16 +34,16 @@ router.post('/login', async function(req, res, next) {
 router.post('/signup', async function(req, res, next) {
     const client = await pool.connect();
     try {
-        const { email, password } = req.body;
+        const { fullName, email, password } = req.body;
         let result = await client.query("SELECT * FROM accounts WHERE email = $1", [email]);
         if (result.rows.length !== 0) {
-            return res.json({ message: "Email already exists" });
+            return res.json({ message: "EMAIL_ALREADY_EXISTS" });
         }
         const hashPassword = await bcrypt.hash(password, 10);
-        client.query("INSERT INTO public.accounts (email, password) VALUES ($1, $2) RETURNING *", [email, hashPassword])
+        client.query("INSERT INTO public.accounts (email, password, full_name) VALUES ($1, $2, $3) RETURNING *", [email, hashPassword, fullName])
         .then(result => {
             console.log(result);
-            return res.json({ message: "Signup successfully" });
+            return res.json({ message: "SIGNUP_SUCCESSFULLY" });
         }).catch(e => {
             console.log(e);
             return res.json({ message: "Something went error" });
