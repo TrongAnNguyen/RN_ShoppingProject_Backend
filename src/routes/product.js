@@ -67,6 +67,44 @@ router.get('/top', async function(req, res, next) {
     });
 });
 
+router.get('/bytype', async function(req, res, next) {
+    (async () => {
+        const client = await pool.connect();
+        try {
+            const { idType, page } = req.query;
+            const limit = 5;
+            const offset = (page - 1) * limit;
+            const sql = `SELECT p.id, p.name, p.id_type, p.price, p.color, 
+                    p.material, p.description, t.name as nameType, array_agg(i.link) AS images
+                    FROM product p inner join product_type t ON t.id = p.id_type INNER 
+                    JOIN images i ON i.id_product = p.id WHERE id_type = $1 GROUP BY 
+                    p.id, p.name, p.id_type, t.name, p.price, p.color, p.material, 
+                    p.description, t.name LIMIT ${limit} OFFSET ${offset}`;
+            client.query(sql, [idType])
+            .then(result => {
+                if (result.rows.length === 0) {
+                    return res.json({ message: 'Product list is empty!' });
+                }
+                return res.json({
+                    message: 'SUCCESS',
+                    product: result.rows
+                });
+            }).catch(error => {
+                console.log(error);
+                return res.json({ message: 'Something went error!' });
+            });
+        } catch (error) {
+            console.log(error);
+            return res.json(error);
+        } finally {
+            client.release();
+        }
+    })().catch(error => {
+        console.log(error);
+        return res.json({ message: 'Something went error!' });
+    });
+});
+
 router.get('/image/type/:name', async function(req, res, next) {
     const imgName = req.params.name;
     const path = appRoot + '/images/type/' + imgName;
