@@ -31,6 +31,8 @@ const verifyToken = async (req, res, next) => {
     }
 }
 
+
+
 router.get('/profile', verifyToken ,function(req, res, next) {
     return res.json({ message: 'hello' });
 });
