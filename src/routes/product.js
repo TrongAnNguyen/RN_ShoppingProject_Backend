@@ -105,6 +105,43 @@ router.get('/bytype', async function(req, res, next) {
     });
 });
 
+router.get('/collection', async function(req, res, next) {
+    (async () => {
+        const client = await pool.connect();
+        try {
+            const { page } = req.query;
+            const limit = 5;
+            const offset = (page - 1) * limit;
+            const sql = `SELECT p.id, p.name, p.id_type, p.price, p.color, p.material, 
+                    p.description, array_agg(i.link) AS images FROM images i inner join 
+                    product p ON i.id_product = p.id where incollection = 1  group by p.id, 
+                    p.name, p.id_type, p.price, p.color, p.material, p.description 
+                    LIMIT ${limit} OFFSET ${offset}`;
+            client.query(sql)
+            .then(result => {
+                if (result.rows.length === 0) {
+                    return res.json({ message: 'Product list is empty!' });
+                }
+                return res.json({
+                    message: 'SUCCESS',
+                    product: result.rows
+                });
+            }).catch(error => {
+                console.log(error);
+                return res.json({ message: 'Something went error!' });
+            });
+        } catch (error) {
+            console.log(error);
+            return res.json(error);
+        } finally {
+            client.release();
+        }
+    })().catch(error => {
+        console.log(error);
+        return res.json({ message: 'Something went error!' });
+    });
+});
+
 router.get('/image/type/:name', async function(req, res, next) {
     const imgName = req.params.name;
     const path = appRoot + '/images/type/' + imgName;
@@ -115,6 +152,44 @@ router.get('/image/:name', async function(req, res, next) {
     const imgName = req.params.name;
     const path = appRoot + '/images/product/' + imgName;
     return res.sendFile(path);
+});
+
+router.get('/search', async function(req, res, next) {
+    (async () => {
+        const { key } = req.query;
+        const client = await pool.connect();
+        try {
+            const { page } = req.query;
+            const limit = 5;
+            const offset = (page - 1) * limit;
+            const sql = `SELECT p.id, p.name, p.id_type, p.price, p.color, p.material, 
+                    p.description, array_agg(i.link) AS images FROM product p INNER JOIN 
+                    images i ON p.id = i.id_product where name like '%${key}%' group by p.id,
+                    p.name, p.id_type, p.price, p.color, p.material, p.description`;
+            client.query(sql)
+            .then(result => {
+                if (result.rows.length === 0) {
+                    return res.json({ message: 'No result!' });
+                }
+                return res.json({
+                    message: 'SUCCESS',
+                    product: result.rows
+                });
+            }).catch(error => {
+                console.log(error);
+                return res.json({ message: 'Something went error!' });
+            });
+        } catch (error) {
+            console.log(error);
+            return res.json(error);
+        } finally {
+            client.release();
+        }
+    })().catch(error => {
+        console.log(error);
+        return res.json({ message: 'Something went error!' });
+    });
+
 });
 
 module.exports = router;
