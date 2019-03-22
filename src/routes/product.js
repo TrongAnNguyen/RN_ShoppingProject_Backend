@@ -189,7 +189,6 @@ router.get('/search', async function(req, res, next) {
         console.log(error);
         return res.json({ message: 'Something went error!' });
     });
-
 });
 
 module.exports = router;
