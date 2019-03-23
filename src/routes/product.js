@@ -154,14 +154,16 @@ router.get('/image/:name', async function(req, res, next) {
     return res.sendFile(path);
 });
 
+router.get('/image/collection', async function(req, res, next) {
+    const bannerPath = appRoot + '/images/type/banner.jpg';
+    return res.sendFile(bannerPath);
+});
+
 router.get('/search', async function(req, res, next) {
     (async () => {
-        const { key } = req.query;
         const client = await pool.connect();
         try {
-            const { page } = req.query;
-            const limit = 5;
-            const offset = (page - 1) * limit;
+            const { key } = req.query;
             const sql = `SELECT p.id, p.name, p.id_type, p.price, p.color, p.material, 
                     p.description, array_agg(i.link) AS images FROM product p INNER JOIN 
                     images i ON p.id = i.id_product where name like '%${key}%' group by p.id,

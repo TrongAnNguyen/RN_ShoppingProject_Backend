@@ -87,4 +87,39 @@ router.post('/profile', verifyToken, async function(req, res, next) {
     });
 });
 
+router.post('/checkout', verifyToken, async function(req, res, next) {
+    (async () => {
+        const { cartItems, totalPrice } = req.body;
+        const client = await pool.connect();
+        try {
+            const sql = `INSERT INTO bill (id_customer, date_order, total, status) VALUES
+                    ($1, NOW(), $2, 1) RETURNING id`;
+            client.query(sql, [res.locals.user.id, totalPrice])
+            .then(result => {
+                cartItems.forEach(item => {
+                    const sql = `INSERT INTO bill_detail (id_bill, id_product, quantity, price) 
+                        VALUES ($1, $2, $3, $4)`;
+                    client.query(sql, [result.rows[0].id, item.id, item.quantity, item.price])
+                    .then(result => {
+                    }).catch(error => {
+                        console.log(error);
+                    });
+                });
+                return res.json({ message: 'SUCCESS' });
+            }).catch(error => {
+                console.log(error);
+                return res.json({ message: 'Something went error!' });
+            });
+        } catch (error) {
+            console.log(error);
+            return res.json(error);
+        } finally {
+            client.release();
+        }
+    })().catch(error => {
+        console.log(error);
+        return res.json({ message: 'Something went error!' });
+    });
+});
+
 module.exports = router;
