@@ -154,7 +154,7 @@ router.get('/image/:name', async function(req, res, next) {
     return res.sendFile(path);
 });
 
-router.get('/image/collection', async function(req, res, next) {
+router.get('/image/collection/:name', async function(req, res, next) {
     const bannerPath = appRoot + '/images/type/banner.jpg';
     return res.sendFile(bannerPath);
 });
