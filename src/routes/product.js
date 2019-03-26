@@ -146,20 +146,20 @@ router.get('/image/type/:name', async function(req, res, next) {
     const imgName = req.params.name;
     // const path = appRoot + '/images/type/' + imgName;
     const path = serverStorageURL + '/images/type/' + imgName;
-    return res.sendFile(path);
+    return res.redirect(path);
 });
 
 router.get('/image/:name', async function(req, res, next) {
     const imgName = req.params.name;
     // const path = appRoot + '/images/product/' + imgName;
     const path = serverStorageURL + '/images/product/' + imgName;
-    return res.sendFile(path);
+    return res.redirect(path);
 });
 
 router.get('/image/collection/:name', async function(req, res, next) {
     // const bannerPath = appRoot + '/images/type/banner.jpg';
     const bannerPath = serverStorageURL + '/images/type/banner.jpg';
-    return res.sendFile(bannerPath);
+    return res.redirect(bannerPath);
 });
 
 router.get('/search', async function(req, res, next) {
