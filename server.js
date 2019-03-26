@@ -11,6 +11,7 @@ const user = require('./src/routes/user');
 const product = require('./src/routes/product');
 
 global.appRoot = path.resolve(__dirname);
+global.serverStorageURL = 'https://s3-ap-southeast-1.amazonaws.com/shoppingprojectstorage';
 
 // Config database
 const pool = new Pool(keys.database);

@@ -144,18 +144,21 @@ router.get('/collection', async function(req, res, next) {
 
 router.get('/image/type/:name', async function(req, res, next) {
     const imgName = req.params.name;
-    const path = appRoot + '/images/type/' + imgName;
+    // const path = appRoot + '/images/type/' + imgName;
+    const path = serverStorageURL + '/images/type/' + imgName;
     return res.sendFile(path);
 });
 
 router.get('/image/:name', async function(req, res, next) {
     const imgName = req.params.name;
-    const path = appRoot + '/images/product/' + imgName;
+    // const path = appRoot + '/images/product/' + imgName;
+    const path = serverStorageURL + '/images/product/' + imgName;
     return res.sendFile(path);
 });
 
 router.get('/image/collection/:name', async function(req, res, next) {
-    const bannerPath = appRoot + '/images/type/banner.jpg';
+    // const bannerPath = appRoot + '/images/type/banner.jpg';
+    const bannerPath = serverStorageURL + '/images/type/banner.jpg';
     return res.sendFile(bannerPath);
 });
 
